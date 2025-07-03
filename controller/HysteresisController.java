@@ -10,7 +10,7 @@ public class HysteresisController {
 
     //Ensures replication increases only when heat is significantly high, and decreases only when very low
     public int adjustReplication(double heat, int currentRep) {
-        if (heat > UPPER_HEAT && currentRep < 3) return currentRep + 1;
+        if (heat > UPPER_HEAT && currentRep < 4) return currentRep + 1;
         if (heat < LOWER_HEAT && currentRep > 1) return currentRep - 1;
         return currentRep;
     }

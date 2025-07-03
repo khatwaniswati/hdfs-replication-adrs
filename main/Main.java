@@ -65,13 +65,15 @@ public class Main {
             }
 
             double heat = tracker.getHeat(file);
-            int currentRep = 2;
-            int newRep = hysteresis.adjustReplication(heat, currentRep);
 
-            if (newRep != currentRep) {
-                replicaManager.setReplication(cleanPath, (short) newRep);
+            int oldRep = replicaManager.getCurrentReplication(cleanPath);
+            int newRep = hysteresis.adjustReplication(heat,oldRep);
+            Evaluator.log("Heat::"+heat+" oldRep:"+oldRep+" newRep:"+newRep);
+
+            if (oldRep != newRep) {
+                replicaManager.setReplication(cleanPath, newRep);
                 Evaluator.log("Adjusted replication for >> " + cleanPath + " to " + newRep);
-                Evaluator.logReplicationEvent(cleanPath, currentRep, newRep, heat);
+                Evaluator.logReplicationEvent(cleanPath, oldRep, newRep, heat);
             } else {
                 Evaluator.log("No change for " + cleanPath);
             }
