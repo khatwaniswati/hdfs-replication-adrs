@@ -1,4 +1,4 @@
-FROM openjdk:11
+FROM openjdk:8
 
 # Install wget and Hadoop
 RUN apt-get update && apt-get install -y wget && \
@@ -16,6 +16,11 @@ ENV HADOOP_CLASSPATH="$($HADOOP_HOME/bin/hadoop classpath)"
 WORKDIR /usr/src/app
 COPY . .
 
-# Compile during container run, not build
-CMD javac -cp "$($HADOOP_HOME/bin/hadoop classpath)" main/Main.java tracker/*.java controller/*.java predictor/*.java evaluator/*.java && \
-    java -cp ".:$($HADOOP_HOME/bin/hadoop classpath)" main.Main
+
+# Compile all Java files and create jar
+RUN export HADOOP_CLASSPATH="$($HADOOP_HOME/bin/hadoop classpath)" && \
+    javac -classpath "$HADOOP_CLASSPATH" -d . *.java main/*.java tracker/*.java controller/*.java predictor/*.java evaluator/*.java && \
+    jar -cvf myproject.jar .
+
+# Default command: just keep container running so you can exec into it
+CMD ["sleep", "infinity"]
